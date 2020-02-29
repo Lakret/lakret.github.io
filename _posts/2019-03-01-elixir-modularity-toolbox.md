@@ -1,6 +1,4 @@
-# Elixir's modularity toolbox
-
-Elixir is one of a very few languages that provides an almost complete set of modular abstractions. In this post I aim to provide a description of different ways of achieving modularity in Elixir for different application sizes, with usage notes and examples. We'll also look at a simple example of an app moving from one modularity "level" to the next over time, and will try some tools that will help us understand modular structure of our app better.
+Elixir is one of few languages that provides an almost complete set of modular abstractions. In this post I aim to provide a description of different ways of achieving modularity in Elixir for different application sizes, with usage notes and examples. We'll also look at a simple example of an app moving from one modularity "level" to the next over time, and will try some tools that will help us understand modular structure of our apps better.
 
 ## Table of Contents
 
@@ -22,81 +20,288 @@ Elixir is one of a very few languages that provides an almost complete set of mo
 ## What's modularity?
 
 To talk about modularity, we need to define it first. I consider modularity to be a spectrum, thus defining it in terms of its range seems reasonable.
-Non-modular code - is a code which:
-is highly interconnected - there is no or very little/inadequate separations of logical units from each other. Modules, if those are used, have low cohesion, and a lot of dependencies/dependents. Different concerns are not separated; one module may be doing several unrelated things.
-contains a lot of implicit contracts between different parts of code - often manifested via dependency of one part of the code on order/duration of side-effects in another part.
-has a property of failures in one part making another part crash
-is becoming disproportionally harder to understand, change and maintain the larger it grows - everything affects everything, changes tend to have a cascade effect, and each additional feature is complicating existing code even further.
 
-Highly modular code - is a code in which:
-logical units are separated, and each of those modules has as few dependencies as reasonable, and high cohesion
-contracts between modules are explicit
-failures in one part of the code don't cause unrelated parts to fail
-is becoming proportionally harder to understand, change and maintain the larger it grows
+**Non-modular code ** --  is a code which:
+
+- is *highly interconnected*  --  there is no or very little/inadequate separations of logical units from each other. Modules, if those are used, 
+have low [cohesion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)), 
+and a lot of dependencies/dependents. Different concerns are not separated; one module may be doing several unrelated things.
+- contains a lot of *implicit contracts* between different parts of code --  often manifested via dependency of one part of the code on order/duration of side-effects in another part.
+- has a pattern of *failures in one part making unrelated parts crash*
+- is becoming *disproportionally harder to understand, change and maintain* the larger it grows  --  everything affects everything, changes tend to have a cascade effect, and each additional feature is complicating existing code even further.
+
+**Highly modular code** --  is a code in which:
+
+- *logical units are separated*, and each of those modules has as few dependencies as reasonable, and high cohesion
+- *contracts* between modules are *explicit*
+- *failures in one part of the code don't cause unrelated parts to fail*
+- is becoming *proportionally harder to understand, change and maintain* the larger it grows
 
 At the same time, non-modular code in the small is often easier to read and maintain, and highly modular code is often longer and sometimes harder to follow, especially when abused.
-Non-modular code is also faster to write until certain sizes, and sometimes results must be achieved as fast as possible - in these cases writing non-modular code in a crisis is ok, as long as after the crisis end this code will be fit back into shape.
+
+Non-modular code is also faster to write until certain sizes, and sometimes results must be achieved as fast as possible ;  in these cases writing non-modular code in a crisis is ok, as long as after the crisis end this code will be fit back into shape.
+
 Thus, modularity is something that becomes more important the larger code grows, and excessive modularity may hurt developer productivity and performance.
 
 ## Modularity levels
 
-There are conventions for implementing different levels of modularity in the Elixir community, though the whole "levels" nomenclature is my own attempt at categorising those conventions. Selecting an appropriate level of modularity for some code is easier when those levels are well-defined, so what follows is my attempt of defining those levels.
-Each level is described in terms of the best possible implementation. You can easily have non-modular code, yet use behaviours all over the place, - implicit contracts and failure modes can bite at any code organisation level.
-Also note, that I use "app" when I talk about a "program", and "application" when I talk about an Elixir application in the following sections.
+There are conventions for implementing different levels of modularity in the Elixir community, though the whole "levels" nomenclature is my own attempt at categorizing those conventions. Selecting an appropriate level of modularity for some code is easier when those levels are well-defined, so what follows is my attempt of defining those levels.
+
+Each level is described in terms of the best possible implementation. You can easily have non-modular code, yet use behaviours all over the place, - implicit contracts and failure modes can bite at any code organization level.
+
+> **Note:** I use "app" when I talk about a "program", and "application" when I talk about [an Elixir application](https://elixir-lang.org/getting-started/mix-otp/supervisor-and-application.html#understanding-applications) in the following sections.
 
 ## Level 0. One module
 
 Nuff said.
-Applying classic top-down programming is extremely beneficial at any level, including this one - and helps with transitioning to the next one, if the app grows.
-Example: To better demonstrate how an app can be refactored by moving from one modularity level to the next, let's take an example of a simple chess server. Let's start with just one module:
-Default Elixir folder structure that you can get from `mix new chess`.Let's assume that for now we concentrate on a console app. By applying top-down design we can arrive at something like this in a couple of minutes:
 
+Applying classic [top-down programming](https://dzone.com/articles/how-does-top-down-programming-work) is extremely beneficial at any level, 
+including this one - and helps with transitioning to the next one, if the app grows.
 
+**Example:** To better demonstrate how an app can be refactored by moving from one modularity level to the next, let's take an example of a simple chess server. Let's start with just one module:
 
-Now, you may decide that you want to store board, current player, and turn in a struct (which you can do in a submodule in the same file - when starting, it's often helpful to keep things close), or separate functions/name things slightly differently, but the design process is the same: we start with global loop, and recursively drill it down until each functions becomes small enough to tackle. execute_move in particular will probably need splitting into several helpers eventually.
-We also group together IO and related pieces of logic. Of course, you should also try to minimise the number of impure functions starting even from this level - IO tends to change quite a bit during development, and testing pure functions is easier.
+![Default Elixir folder structure that you can get from `mix new chess`.]({{ site.url }}/assets/modularity/01.png)
+
+*Default Elixir folder structure that you can get from `mix new chess`.*
+
+Let's assume that for now we concentrate on a console app. By applying top-down design we can arrive at something like this in a couple of minutes:
+
+```elixir
+defmodule Chess do
+  def play() do
+    play(init_board(), first_turn_player(), 0)
+  end
+
+  def play(board, player, turn) do
+    move = read_move(player)
+
+    case execute_move(move, board, player) do
+      {:ok, new_board} ->
+        if checkmate?(new_board) do
+          declare_victory(player, turn)
+        else
+          play(board, next_player(player), turn + 1)
+        end
+
+      {:error, illegal_move} ->
+        report_illegal_move(player, illegal_move)
+        play(board, player, turn)
+    end
+  end
+
+  # IO
+
+  def read_move(player) do
+    # TODO:
+  end
+
+  def report_illegal_move(player, illegal_move) do
+    # TODO:
+  end
+
+  def declare_victory(player, turn) do
+    # TODO:
+  end
+  
+  # Players
+
+  def first_turn_player() do
+    # TODO:
+  end
+
+  def next_player(player) do
+    # TODO:
+  end
+  
+  # Game logic
+
+  def init_board() do
+    # TODO:
+  end
+
+  def checkmate?(new_board) do
+    # TODO:
+  end
+
+  def execute_move(move, board, player) do
+    # TODO:
+  end
+end
+```
+
+Now, you may decide that you want to store board, current player, and turn in a struct (which you can do in a submodule in the same file --  when starting, it's often helpful to keep things close), or separate functions/name things slightly differently, but the design process is the same: we start with global loop, and recursively drill it down until each functions becomes small enough to tackle. `execute_move` in particular will probably need splitting into several helpers eventually.
+
+We also group together IO and related pieces of logic. Of course, you should also try to minimise the number of impure functions starting even from this level  --  IO tends to change quite a bit during development, and testing pure functions is easier.
+
 I would then write typespecs for those functions, and return some default data from each of those. After that I will work on a concrete implementation, and finally I will add docs.
+
 Later on you may want to make most functions here private to specify precise module boundary, but during initial development it's especially helpful to be able to play with each function in IEx.
-When to use: small scripts, demonstrations of simple algorithms, tiny small command line tools, etc.
+
+**When to use:** small scripts, demonstrations of simple algorithms, tiny small command line tools, etc.
 
 ## Level 1. A collection of modules
 
-A simple collection of modules. Often there's application.ex, or main.ex, or similar file there, that starts some workflow, using other modules.
-At this level issues of modular design start to become relevant. We are levelling up our modular design game by separating logical units of code from each other.
+A simple collection of modules. Often there's `application.ex`, or `main.ex`, or similar file there, that starts some workflow, using other modules.
+
+At this level issues of modular design start to become relevant. We are levelling up our modular design game by *separating logical units of code from each other*.
+
 Starting from this level, it's important to be mindful of dependencies between those modules. Good modular design emphasises minimal dependencies between modules, and high cohesion in each module.
-Example: Continuing with our chess server, after writing the first draft of the implementation we may want to separate things to different modules - the original module is probably quite long at this point.
-Level 1 Chess server folder structureAll modules, except the main one - Chess, should be prefixed with Chess. - the name of our (Elixir) application. This helps with visually distinguishing our code from dependencies, and also clearly shows that Chess is an entry point. For example, the module for board:
 
+**Example:** Continuing with our chess server, after writing the first draft of the implementation we may want to separate things to different modules - the original module is probably quite long at this point.
 
+![Level 1 Chess server folder structure]({{ site.url }}/assets/modularity/02.png)
+
+*Level 1: Chess server folder structure.*
+
+All modules, except the main one  -- `Chess`, should be prefixed with `Chess.`  --  the name of our (Elixir) application. This helps with visually distinguishing our code from dependencies, and also clearly shows that `Chess` is an entry point. For example, the module for board:
+
+```elixir
+defmodule Chess.Board do
+  defstruct [:white_pieces, :black_pieces, :cells]
+
+  def init_board() do
+    pieces = all_pieces()
+
+    %__MODULE__{
+      white_pieces: Enum.map(pieces, fn p -> {:white, p} end),
+      black_pieces: Enum.map(pieces, fn p -> {:black, p} end),
+      cells: init_cells()
+    }
+  end
+
+  def checkmate?(new_board) do
+    # TODO:
+    false
+  end
+
+  # Helpers
+
+  defp all_pieces() do
+    [:king, :queen, {:rook, 2}, {:bishop, 2}, {:knight, 2}, {:pawn, 8}]
+    |> Enum.flat_map(fn
+      {piece, count} -> List.duplicate(piece, count)
+      piece -> [piece]
+    end)
+  end
+
+  defp init_cells() do
+    # TODO:
+  end
+end
+```
 
 It's important to separate public API from the helpers, and make sure that we expose as little as possible. Public API should always be documented, and typespecs will also improve things in the long term.
-Also, resist the desire to import all the things. Prefer alias as much as possible. When you alias something, you can easily find all the cases where functions on a given module are called, and names of those functions also may be improved. For example, we can first directly translate our main module to use the submodules:
 
+Also, resist the desire to `import` all the things. Prefer `alias` as much as possible. When you alias something, you can easily find all the cases where functions on a given module are called, and names of those functions also may be improved. For example, at first we can directly translate our main module to use the submodules:
 
+```elixir
+defmodule Chess do
+  alias Chess.{Board, Player, Move, Interaction}
 
-However, you can clearly see that naming of those functions may now be improved: Move.execute_move and Board.init_board are a clear tautology, there's no need to repeat _player in each Player module function, and we don't need verbs for Interaction functions that write anymore as well:
+  def play() do
+    play(Board.init_board(), Player.first_turn_player(), 0)
+  end
 
+  def play(board, player, turn) do
+    move = Interaction.read_move(player)
 
+    case Move.execute_move(move, board, player) do
+      {:ok, new_board} ->
+        if Board.checkmate?(new_board) do
+          Interaction.declare_victory(player, turn)
+        else
+          play(board, Player.next_player(player), turn + 1)
+        end
+
+      {:error, illegal_move} ->
+        Interaction.report_illegal_move(player, illegal_move)
+        play(board, player, turn)
+    end
+  end
+end
+```
+
+However, you can clearly see that naming of those functions may now be improved: `Move.execute_move` and `Board.init_board` are a clear tautology, there's no need to repeat `_player` in each `Player` module function, and we don't need verbs for `Interaction` functions anymore as well:
+
+```elixir
+defmodule Chess do
+  alias Chess.{Board, Player, Move, Interaction}
+
+  def play() do
+    play(Board.init(), Player.first_turn(), 0)
+  end
+
+  def play(board, player, turn) do
+    move = Interaction.read_move(player)
+
+    case Move.execute(move, board, player) do
+      {:ok, new_board} ->
+        if Board.checkmate?(new_board) do
+          Interaction.victory(player, turn)
+        else
+          play(board, Player.next(player), turn + 1)
+        end
+
+      {:error, illegal_move} ->
+        Interaction.illegal_move(player, illegal_move)
+        play(board, player, turn)
+    end
+  end
+end
+```
 
 Ability to improve names like this is one of indicators of good modularity: each module has a prime responsibility, so nouns may often be skipped.
-We also may want to visualise dependencies between modules with the help of xref at this stage (see instructions on how to do that in the end of the post):
-Level 1 xref dependency graphWe may notice and remove some dependencies that can be easily avoided if we do that. There isn't anything unusual at this stage in the chess app, though.
-If a module has a primary struct / data type that it works with, we should write a @type t :: ... spec. Naming the primary type as t is a convention in both Elixir and OCaml. Structs define a type with this name on creation.
-When to use: for small apps, e.g. small command-line tools, implementations of more complicated algorithms, etc.
+
+We also may want to visualise dependencies between modules with the help of `xref` at this stage (see instructions on how to do that in the end of the post):
+
+![Level 1 xref dependency graph]({{ site.url }}/assets/modularity/03.png)
+
+*Level 1: `xref` dependency graph.*
+
+We may notice and remove some dependencies that can be easily avoided if we do that. There isn't anything unusual at this stage in the chess app, though.
+
+If a module has a primary struct / data type that it works with, we should write a  `@type t :: ...` spec. Naming the primary type as `t` is a convention in both `Elixir` and `OCaml`. Structs define a type with this name on creation.
+
+**When to use:** for small apps, e.g. small command-line tools, implementations of more complicated algorithms, etc.
 
 ## Level 2. Modules with submodules
 
-A collections of modules, some of which have submodules (e.g., App.URI uses App.URI.Parser).
+A collections of modules, some of which have submodules (e.g., `App.URI` may have  `App.URI.Parser` as a submodule, and use it internally).
+
 A modules with submodules often works as a kind of an entrypoint, and submodules are rarely used directly (if not counting structs and protocol definitions) from other parts of the system. Often this is organised as a folder with all the "interface"/entrypoint modules at the root, and subfolders with submodules are created for those interface modules that need them.
-Example: imagine, that now we want to provide a play against computer mode. We can add a Chess.Robot module to the root folder of our app, but the logic required for making that work will eventually require separation into several submodules. We may arrive to a structure like this:
-Nobody apart from Chess.Robot should use Chess.Robot.Generator, Chess.Robot.Evaluator, and Chess.Robot.Selector. By putting them in a directory with name robot we indicate that those are submodules of the Chess.Robot module.
-We can use xref again to see dependencies between our modules:
-Level 2 xref dependency graphLet's see only the dependencies of Chess.Robot with source option: mix xref graph --source lib/robot.ex --format=dot.
-Chess.Robot module dependencies graphAnd we can see the modules depending on Chess.Robot with sink, as inmix xref graph --sink lib/robot.ex --format=dot :
-Modules depending on Chess.Robot graphWe also may notice that most modules that depend on Chess.Board also depend on Chess.Player - maybe it's time to add current player to the Chess.Board struct? Looking at the dependencies graph is often useful to spot a possible refactoring like this.
-Another things to watch for is cyclic dependencies between modules. You should generally avoid creating those. Cyclic dependencies can always be refactored by either merging mutually dependent modules together, or (better in most cases) - introducing another module, that will use both of mutually dependent modules and provide public interface. In more fancy words: your dependencies graph should be acyclic.
-For example, if A is mutually dependent with B, you can introduce C, and make A and B its submodules.
-When to use: libraries, somewhat larger apps than in level 1.
+
+**Example:** imagine, that now we want to provide a play against computer mode. We can add a `Chess.Robot` module to the root folder of our app, but the logic required for making that work will eventually require separation into several submodules. We may arrive to a structure like this:
+
+![Submodules `xref`]({{ site.url }}/assets/modularity/04.png)
+
+Nobody apart from `Chess.Robot` should use `Chess.Robot.Generator`, `Chess.Robot.Evaluator`, and `Chess.Robot.Selector`. By putting them in a directory with name robot we indicate that those are submodules of the `Chess.Robot` module.
+
+We can use `xref` again to see dependencies between our modules:
+
+![Level 2 xref dependency graph]({{ site.url }}/assets/modularity/05.png)
+
+*Level 2: `xref` dependency graph.*
+
+Let's see only the dependencies of `Chess.Robot` with `source` option: `mix xref graph --source lib/robot.ex --format=dot`:
+
+![Chess.Robot module dependencies graph]({{ site.url }}/assets/modularity/06.png)
+
+*`Chess.Robot` module dependencies graph*
+
+And we can see the modules depending on Chess.Robot with `sink`, as in
+`mix xref graph --sink lib/robot.ex --format=dot`:
+
+![Modules depending on Chess.Robot graph]({{ site.url }}/assets/modularity/07.png)
+
+*Modules depending on `Chess.Robot` graph*
+
+We also may notice that most modules that depend on `Chess.Board` also depend on `Chess.Player` --  maybe it's time to add current player to the `Chess.Board` struct? Looking at the dependencies graph is often useful to spot a possible refactoring like this.
+
+Another things to watch for is cyclic dependencies between modules. You should generally avoid creating those. Cyclic dependencies can always be refactored by either merging mutually dependent modules together, or (better in most cases) - introducing another module, that will use both of mutually dependent modules and provide public interface. In more fancy words: *your dependencies graph should be acyclic*.
+
+For example, if `A` is mutually dependent with `B`, you can introduce `C`, and make `A` and `B` its submodules.
+
+**When to use:** libraries, somewhat larger apps than in level 1.
 
 ## Level 2.5. Contexts
 
