@@ -23,8 +23,8 @@ To talk about modularity, we need to define it first. I consider modularity to b
 
 **Non-modular code ** --  is a code which:
 
-- is *highly interconnected*  --  there is no or very little/inadequate separations of logical units from each other. Modules, if those are used, 
-have low [cohesion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)), 
+- is *highly interconnected*  --  there is no or very little/inadequate separations of logical units from each other. Modules, if those are used,
+have low [cohesion](https://en.wikipedia.org/wiki/Cohesion_(computer_science)),
 and a lot of dependencies/dependents. Different concerns are not separated; one module may be doing several unrelated things.
 - contains a lot of *implicit contracts* between different parts of code --  often manifested via dependency of one part of the code on order/duration of side-effects in another part.
 - has a pattern of *failures in one part making unrelated parts crash*
@@ -55,7 +55,7 @@ Each level is described in terms of the best possible implementation. You can ea
 
 Nuff said.
 
-Applying classic [top-down programming](https://dzone.com/articles/how-does-top-down-programming-work) is extremely beneficial at any level, 
+Applying classic [top-down programming](https://dzone.com/articles/how-does-top-down-programming-work) is extremely beneficial at any level,
 including this one - and helps with transitioning to the next one, if the app grows.
 
 **Example:** To better demonstrate how an app can be refactored by moving from one modularity level to the next, let's take an example of a simple chess server. Let's start with just one module:
@@ -243,9 +243,9 @@ Finally, if we need to have some non-Elixir code, or if we have some external co
 
 One of main pros of this design (if executed correctly) is an ability to provide significantly higher uptime and throughputs than non-distributed apps. It's also possible to also scale engineering team faster with this approach, since multiple components can be developed independently.
 
-This, of course, multiplies complexity by a power of magnitude. Apart from making decisions about how to structure those related components, how to orchestrate and monitor them, you also need to be mindful of a whole new world of failure states that comes with distributed programming. As in the famous quote ([popularized](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/Distribution.pdf) by Laslie Lamport in 1987):
+This, of course, multiplies complexity by a power of magnitude. Apart from making decisions about how to structure those related components, how to orchestrate and monitor them, you also need to be mindful of a whole new world of failure states that comes with distributed programming. As in the famous quote ([popularized](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/Distribution.pdf) by Leslie Lamport in 1987):
 
-> A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable. 
+> A distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable.
 
 At the same time, Elixir together with OTP provides a solution for those hard distribution questions, which is probably the best in terms of developer productivity and reliability. Applying it correctly is still non-trivial, but having tools for that in the standard library is a huge win over many competing languages.
 
