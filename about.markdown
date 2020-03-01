@@ -4,15 +4,19 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](https://jekyllrb.com/)
+Hey there! I'm Dmitry. I live in Berlin, and work as a backend team lead at [Lana Labs](https://lanalabs.com/en/).
 
-You can find the source code for Minima at GitHub:
-[jekyll][jekyll-organization] /
-[minima](https://github.com/jekyll/minima)
+I specialize in functional and distributed programming, and technical team leadership. I also enjoy product and UX.
 
-You can find the source code for Jekyll at GitHub:
-[jekyll][jekyll-organization] /
-[jekyll](https://github.com/jekyll/jekyll)
+I view software engineering as a new classic profession, similar to medicine or law. In other words: technical decisions should always be made by a person maintaining the system: the person having the deepest understanding of its operation, purpose, and architecture.
 
+I strongly prefer remote work. Commute is a major PIA, and concentrating in spaces that I don't control is often hard. In the office thing is no longer ethically defensible either: neither from environmental, or diversity perspectives.
 
-[jekyll-organization]: https://github.com/jekyll
+I'm a polyglot programmer, with a preference for dynamically typed and REPL-friendly functional programming languages.
+Elixir is my darling, but I also like Erlang and Clojure. On the static side of the house, I prefer ML-family languages, e.g. OCaml or F#.
+
+For the most performance critical parts of the systems I build I tend to use Rust. I don't mind adding some Python, Scala, or JavaScript code where needed.
+
+Apart from work, I enjoy all kinds of music, dancing, walking in the nature, and gym. Though Russian is my native language, English has mostly replaced it in my day to day life. I'm learning German and Spanish.
+
+You can find me on [Twitter](https://twitter.com/akaLakret), [Github](https://github.com/Lakret), or [LinkedIn](https://www.linkedin.com/in/lakret/).
