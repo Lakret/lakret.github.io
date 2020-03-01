@@ -66,68 +66,7 @@ including this one - and helps with transitioning to the next one, if the ap
 
 Let's assume that for now we concentrate on a console app. By applying top-down design we can arrive at something like this in a couple of minutes:
 
-```elixir
-defmodule Chess do
-  def play() do
-    play(init_board(), first_turn_player(), 0)
-  end
-
-  def play(board, player, turn) do
-    move = read_move(player)
-
-    case execute_move(move, board, player) do
-      {:ok, new_board} ->
-        if checkmate?(new_board) do
-          declare_victory(player, turn)
-        else
-          play(board, next_player(player), turn + 1)
-        end
-
-      {:error, illegal_move} ->
-        report_illegal_move(player, illegal_move)
-        play(board, player, turn)
-    end
-  end
-
-  # IO
-
-  def read_move(player) do
-    # TODO:
-  end
-
-  def report_illegal_move(player, illegal_move) do
-    # TODO:
-  end
-
-  def declare_victory(player, turn) do
-    # TODO:
-  end
-  
-  # Players
-
-  def first_turn_player() do
-    # TODO:
-  end
-
-  def next_player(player) do
-    # TODO:
-  end
-  
-  # Game logic
-
-  def init_board() do
-    # TODO:
-  end
-
-  def checkmate?(new_board) do
-    # TODO:
-  end
-
-  def execute_move(move, board, player) do
-    # TODO:
-  end
-end
-```
+{% gist cd97a38c02ade7da68fc33d5ebd37180 %}
 
 Now, you may decide that you want to store board, current player, and turn in a struct (which you can do in a submodule in the same file --  when starting, it's often helpful to keep things close), or separate functions/name things slightly differently, but the design process is the same: we start with global loop, and recursively drill it down until each functions becomes small enough to tackle. `execute_move` in particular will probably need splitting into several helpers eventually.
 
@@ -155,100 +94,17 @@ Starting from this level, it's important to be mindful of dependencies between t
 
 All modules, except the main one  -- `Chess`, should be prefixed with `Chess.`  --  the name of our (Elixir) application. This helps with visually distinguishing our code from dependencies, and also clearly shows that `Chess` is an entry point. For example, the module for board:
 
-```elixir
-defmodule Chess.Board do
-  defstruct [:white_pieces, :black_pieces, :cells]
-
-  def init_board() do
-    pieces = all_pieces()
-
-    %__MODULE__{
-      white_pieces: Enum.map(pieces, fn p -> {:white, p} end),
-      black_pieces: Enum.map(pieces, fn p -> {:black, p} end),
-      cells: init_cells()
-    }
-  end
-
-  def checkmate?(new_board) do
-    # TODO:
-    false
-  end
-
-  # Helpers
-
-  defp all_pieces() do
-    [:king, :queen, {:rook, 2}, {:bishop, 2}, {:knight, 2}, {:pawn, 8}]
-    |> Enum.flat_map(fn
-      {piece, count} -> List.duplicate(piece, count)
-      piece -> [piece]
-    end)
-  end
-
-  defp init_cells() do
-    # TODO:
-  end
-end
-```
+{% gist 1278f46e1c84b35a2285293e270bde91 %}
 
 It's important to separate public API from the helpers, and make sure that we expose as little as possible. Public API should always be documented, and typespecs will also improve things in the long term.
 
 Also, resist the desire to `import` all the things. Prefer `alias` as much as possible. When you alias something, you can easily find all the cases where functions on a given module are called, and names of those functions also may be improved. For example, at first we can directly translate our main module to use the submodules:
 
-```elixir
-defmodule Chess do
-  alias Chess.{Board, Player, Move, Interaction}
-
-  def play() do
-    play(Board.init_board(), Player.first_turn_player(), 0)
-  end
-
-  def play(board, player, turn) do
-    move = Interaction.read_move(player)
-
-    case Move.execute_move(move, board, player) do
-      {:ok, new_board} ->
-        if Board.checkmate?(new_board) do
-          Interaction.declare_victory(player, turn)
-        else
-          play(board, Player.next_player(player), turn + 1)
-        end
-
-      {:error, illegal_move} ->
-        Interaction.report_illegal_move(player, illegal_move)
-        play(board, player, turn)
-    end
-  end
-end
-```
+{% gist b2bb1218b66d3c5034aa52d0bae5e6ac %}
 
 However, you can clearly see that naming of those functions may now be improved: `Move.execute_move` and `Board.init_board` are a clear tautology, there's no need to repeat `_player` in each `Player` module function, and we don't need verbs for `Interaction` functions anymore as well:
 
-```elixir
-defmodule Chess do
-  alias Chess.{Board, Player, Move, Interaction}
-
-  def play() do
-    play(Board.init(), Player.first_turn(), 0)
-  end
-
-  def play(board, player, turn) do
-    move = Interaction.read_move(player)
-
-    case Move.execute(move, board, player) do
-      {:ok, new_board} ->
-        if Board.checkmate?(new_board) do
-          Interaction.victory(player, turn)
-        else
-          play(board, Player.next(player), turn + 1)
-        end
-
-      {:error, illegal_move} ->
-        Interaction.illegal_move(player, illegal_move)
-        play(board, player, turn)
-    end
-  end
-end
-```
+{% gist 604bc05addabdffab4413eae46812dda %}
 
 Ability to improve names like this is one of indicators of good modularity: each module has a prime responsibility, so nouns may often be skipped.
 
