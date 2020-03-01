@@ -2,6 +2,25 @@
   background-color: inherit !important;
 }
 
+/* Custom */
+
+body {
+  font-family: 'Fira Sans';
+}
+
+.hero {
+  width: 100%;
+
+  display: inline-block;
+  text-align: center;
+
+  font-family: 'Roboto';
+  font-size: 15rem;
+  font-weight: bold;
+}
+
+/* Copied from minima */
+
 /** Reset some basic elements */
 body,
 h1,
