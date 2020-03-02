@@ -19,4 +19,4 @@ For the most performance critical parts of the systems I build I tend to use Rus
 
 Apart from work, I enjoy all kinds of music, dancing, walking in the nature, and gym. Though Russian is my native language, English has mostly replaced it in my day to day life. I'm learning German and Spanish.
 
-You can find me on [Twitter](https://twitter.com/akaLakret), [Github](https://github.com/Lakret), or [LinkedIn](https://www.linkedin.com/in/lakret/).
+You can find me on [Twitter](https://twitter.com/akaLakret), [Github](https://github.com/Lakret), [Twitch](https://www.twitch.tv/akalakret/videos), or [LinkedIn](https://www.linkedin.com/in/lakret/).

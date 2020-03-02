@@ -1,6 +1,12 @@
 # lakret.github.io
 Dev blog
 
+## Customizations
+
+Based on Minima theme. 
+
+Customized SCSSs; replaced highlighter with custom highlight.js install. Customized footer.
+
 ## Install
 
 ```bash
@@ -16,5 +22,7 @@ bundle install
 ## Running locally
 
 ```bash
-bundle exec jekyll serve
+bundle exec jekyll serve --drafts
 ```
+
+Note `--drafts` option: this shows posts from the `_drafts` folder; they won't be shown in prod.

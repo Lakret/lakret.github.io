@@ -21,8 +21,7 @@
 title: Peak λ
 # email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
-  A blog about software architecture, functional programming, 
-  Elixir, Rust, and all the things that spark joy.
+  Software architecture, functional programming, Elixir, and Rust.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: akaLakret
@@ -33,6 +32,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 theme: minima
 plugins:
   - jekyll-feed
+highlighter: none
 
 # Exclude from processing.
 # The following items will not be processed, by default.
