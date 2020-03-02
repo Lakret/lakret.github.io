@@ -1,6 +1,12 @@
 # lakret.github.io
 Dev blog
 
+## Customizations
+
+Based on Minima theme. 
+
+Customized SCSSs; replaced highlighter with custom highlight.js install. Customized footer.
+
 ## Install
 
 ```bash

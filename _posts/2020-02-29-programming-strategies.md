@@ -26,6 +26,6 @@ enum Colors {
 }
 
 fn main() {
-  println!("yo! {:?}", Colors::RGB(120, 120, 120));
+  println!("yo! color <=> {:?}", Colors::RGB(120, 120, 120));
 }
 ```
