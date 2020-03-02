@@ -60,9 +60,20 @@ including this one - and helps with transitioning to the next one, if the ap
 
 **Example:** To better demonstrate how an app can be refactored by moving from one modularity level to the next, let's take an example of a simple chess server. Let's start with just one module:
 
-![Default Elixir folder structure that you can get from `mix new chess`.]({{ site.url }}/assets/modularity/01.png)
+<pre>
+<code class="plaintext">+ chess/
+    config/
+    + lib/
+        chess.ex
+    test/
+    mix.exs
+</code></pre>
 
 *Default Elixir folder structure that you can get from `mix new chess`.*
+
+<!--
+![Default Elixir folder structure that you can get from `mix new chess`.]({{ site.url }}/assets/modularity/01.png)
+-->
 
 Let's assume that for now we concentrate on a console app. By applying top-down design we can arrive at something like this in a couple of minutes:
 
@@ -91,43 +102,19 @@ defmodule Chess do
     end
   end
 
-  # IO
-
-  def read_move(player) do
-    # TODO:
-  end
-
-  def report_illegal_move(player, illegal_move) do
-    # TODO:
-  end
-
-  def declare_victory(player, turn) do
-    # TODO:
-  end
+  ## IO
+  def read_move(player), do: nil
+  def report_illegal_move(player, illegal_move), do: nil
+  def declare_victory(player, turn), do: nil
   
-  # Players
-
-  def first_turn_player() do
-    # TODO:
-  end
-
-  def next_player(player) do
-    # TODO:
-  end
+  ## Players
+  def first_turn_player(), do: nil
+  def next_player(player), do: nil
   
-  # Game logic
-
-  def init_board() do
-    # TODO:
-  end
-
-  def checkmate?(new_board) do
-    # TODO:
-  end
-
-  def execute_move(move, board, player) do
-    # TODO:
-  end
+  ## Game logic
+  def init_board(), do: nil
+  def checkmate?(new_board), do: nil
+  def execute_move(move, board, player), do: nil
 end
 ```
 
@@ -151,9 +138,24 @@ Starting from this level, it's important to be mindful of dependencies between t
 
 **Example:** Continuing with our chess server, after writing the first draft of the implementation we may want to separate things to different modules - the original module is probably quite long at this point.
 
-![Level 1 Chess server folder structure]({{ site.url }}/assets/modularity/02.png)
+<pre>
+<code class="plaintext">+ chess/
+    config/
+    + lib/
+        board.ex
+        chess.ex
+        interaction.ex
+        move.ex
+        player.ex
+    test/
+    mix.exs
+</code></pre>
 
 *Level 1: Chess server folder structure.*
+
+<!--
+![Level 1 Chess server folder structure]({{ site.url }}/assets/modularity/02.png)
+-->
 
 All modules, except the main one  -- `Chess`, should be prefixed with `Chess.`  --  the name of our (Elixir) application. This helps with visually distinguishing our code from dependencies, and also clearly shows that `Chess` is an entry point. For example, the module for board:
 
@@ -173,12 +175,10 @@ defmodule Chess.Board do
     }
   end
 
-  def checkmate?(new_board) do
-    # TODO:
-    false
-  end
+  # TODO:
+  def checkmate?(new_board), do: false
 
-  # Helpers
+  ## Helpers
 
   defp all_pieces() do
     [:king, :queen, {:rook, 2}, {:bishop, 2}, {:knight, 2}, {:pawn, 8}]
@@ -188,9 +188,8 @@ defmodule Chess.Board do
     end)
   end
 
-  defp init_cells() do
-    # TODO:
-  end
+  # TODO:
+  defp init_cells(), do: nil
 end
 ```
 
@@ -280,7 +279,27 @@ A modules with submodules often works as a kind of an entrypoint, and submodules
 
 **Example:** imagine, that now we want to provide a play against computer mode. We can add a `Chess.Robot` module to the root folder of our app, but the logic required for making that work will eventually require separation into several submodules. We may arrive to a structure like this:
 
+<pre>
+<code class="plaintext">+ chess/
+    config/
+    + lib/
+        + robot/
+            evaluator.ex
+            generator.ex
+            selector.ex
+        board.ex
+        chess.ex
+        interaction.ex
+        move.ex
+        player.ex
+        robot.ex
+    test/
+    mix.exs
+</code></pre>
+
+<!--
 ![Submodules `xref`]({{ site.url }}/assets/modularity/04.png)
+-->
 
 Nobody apart from `Chess.Robot` should use `Chess.Robot.Generator`, `Chess.Robot.Evaluator`, and `Chess.Robot.Selector`. By putting them in a directory with name robot we indicate that those are submodules of the `Chess.Robot` module.
 
@@ -329,17 +348,71 @@ We can still keep `Chess.Board` on the top level of the `Chess` application, or 
 
 After saving the game state to the db, we can provide corresponding APIs for retrieving it, and APIs for players to make moves. Also, our `Chess.Player` module will probably be a different thing from our `User` module. `Game` though should know who is playing white and black pieces, and if one of the players should be a `Robot`.
 
-We'll arrive to a directory structure similar to this:
+We'll arrive to a directory structure similar to this (only showing `lib` folder):
 
-![Chess Phoenix application folder structure]({{ site.url }}/assets/modularity/08.png)
+<pre>
+<code class="plaintext">+ lib/
+    + chess/
+        + games/
+            game.ex
+        + robot/
+            evaluator.ex
+            generator.ex
+            selector.ex
+        + users/
+            user.ex
+        application.ex
+        board.ex
+        games.ex
+        move.ex
+        player.ex
+        repo.ex
+        robot.ex
+        users.ex
+    chess_web/
+    chess.ex
+    chess_web.ex
+</code></pre>
 
 *Chess Phoenix application folder structure*
 
+<!--
+![Chess Phoenix application folder structure]({{ site.url }}/assets/modularity/08.png)
+-->
+
 Now, we may want to clean that up a bit, for example by creating `Chess.Logic` context for the chess-specific game logic and structs:
 
-![Better folder structure with Logic context]({{ site.url }}/assets/modularity/09.png)
+<pre>
+<code class="plaintext">+ lib/
+    + chess/
+        + games/
+            game.ex
+        + logic/
+            board.ex
+            move.ex
+            player.ex
+        + robot/
+            evaluator.ex
+            generator.ex
+            selector.ex
+        + users/
+            user.ex
+        application.ex
+        games.ex
+        logic.ex
+        repo.ex
+        robot.ex
+        users.ex
+    chess_web/
+    chess.ex
+    chess_web.ex
+</code></pre>
 
 *Better folder structure with `Logic` context*
+
+<!--
+![Better folder structure with Logic context]({{ site.url }}/assets/modularity/09.png)
+-->
 
 You also may notice that our structure continues to be nice and recursive: we've got two applications `Chess` and `ChessWeb`, each with an upper-level context module in the `lib` directory. `ChessWeb` is structured according to the MVC pattern, but `Chess` is just our normal Elixir application --  it shouldn't know anything about the web part.
 
