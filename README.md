@@ -22,5 +22,7 @@ bundle install
 ## Running locally
 
 ```bash
-bundle exec jekyll serve
+bundle exec jekyll serve --drafts
 ```
+
+Note `--drafts` option: this shows posts from the `_drafts` folder; they won't be shown in prod.

@@ -1,4 +1,4 @@
-The process of programming is hard to verbalize. We write algorithms everyday, yet we rarely talk about algorithms for writing those algorithms. Things like inspiration, creativity, having a hunch, or Εύρηκα! moment, are not very predictable. Still, there are approaches that you can apply to move from "The program needs to have feature X" to having the feature X running in production. Here, I will catalogue some of them. We'll also look at the challenges inherent to programming that those strategies help to overcome.
+The process of programming is hard to verbalize. We write algorithms everyday, yet we rarely talk about algorithms for writing those algorithms. Things like inspiration, creativity, having a hunch, or an Eureka! moment, are not very predictable. Still, there are approaches that you can apply to move from "The program needs to have feature X" to having the feature X running in production. Here, I will catalogue some of them. We'll also look at the challenges inherent to programming that those strategies help to overcome.
 
 ## REPL-driven development
 
@@ -29,3 +29,5 @@ fn main() {
   println!("yo! color <=> {:?}", Colors::RGB(120, 120, 120));
 }
 ```
+
+## Types or "let the compiler figure that out"
