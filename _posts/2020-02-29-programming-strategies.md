@@ -13,3 +13,19 @@ Hardware engineers use sophisticated CAD packages, and can experiment with physi
 ## Top-down design and placement of things
 
 **Challenge:** lack of spatial awareness.
+
+<!-- TODO: -->
+
+```rust
+#[derive(Debug)]
+enum Colors {
+  White,
+  Black,
+  RGB(u32, u32, u32),
+  HSL(f64, f64, f64)
+}
+
+fn main() {
+  println!("yo! {:?}", Colors::RGB(120, 120, 120));
+}
+```
