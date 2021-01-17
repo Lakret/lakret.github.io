@@ -1,3 +1,8 @@
++++
+title = "Elixir Modularity Toolbox"
+date = 2019-03-01
++++
+
 Elixir is one of few languages that provides an almost complete set of modular abstractions. In this post I aim to provide a description of different ways of achieving modularity in Elixir for different application sizes, with usage notes and examples. We'll also look at a simple example of an app moving from one modularity "level" to the next over time, and will try some tools that will help us understand modular structure of our apps better.
 
 ## Table of Contents
@@ -72,7 +77,7 @@ including this one - and helps with transitioning to the next one, if the ap
 *Default Elixir folder structure that you can get from `mix new chess`.*
 
 <!--
-![Default Elixir folder structure that you can get from `mix new chess`.]({{ site.url }}/assets/modularity/01.png)
+![Default Elixir folder structure that you can get from `mix new chess`.](01.png)
 -->
 
 Let's assume that for now we concentrate on a console app. By applying top-down design we can arrive at something like this in a couple of minutes:
@@ -106,11 +111,11 @@ defmodule Chess do
   def read_move(player), do: nil
   def report_illegal_move(player, illegal_move), do: nil
   def declare_victory(player, turn), do: nil
-  
+
   ## Players
   def first_turn_player(), do: nil
   def next_player(player), do: nil
-  
+
   ## Game logic
   def init_board(), do: nil
   def checkmate?(new_board), do: nil
@@ -154,7 +159,7 @@ Starting from this level, it's important to be mindful of dependencies between t
 *Level 1: Chess server folder structure.*
 
 <!--
-![Level 1 Chess server folder structure]({{ site.url }}/assets/modularity/02.png)
+![Level 1 Chess server folder structure](02.png)
 -->
 
 All modules, except the main one  -- `Chess`, should be prefixed with `Chess.`  --  the name of our (Elixir) application. This helps with visually distinguishing our code from dependencies, and also clearly shows that `Chess` is an entry point. For example, the module for board:
@@ -261,7 +266,7 @@ Ability to improve names like this is one of indicators of good modularity: each
 
 We also may want to visualise dependencies between modules with the help of `xref` at this stage (see instructions on how to do that in the end of the post):
 
-![Level 1 xref dependency graph]({{ site.url }}/assets/modularity/03.png)
+![Level 1 xref dependency graph](03.png)
 
 *Level 1: `xref` dependency graph.*
 
@@ -298,27 +303,27 @@ A modules with submodules often works as a kind of an entrypoint, and submodules
 </code></pre>
 
 <!--
-![Submodules `xref`]({{ site.url }}/assets/modularity/04.png)
+![Submodules `xref`](04.png)
 -->
 
 Nobody apart from `Chess.Robot` should use `Chess.Robot.Generator`, `Chess.Robot.Evaluator`, and `Chess.Robot.Selector`. By putting them in a directory with name robot we indicate that those are submodules of the `Chess.Robot` module.
 
 We can use `xref` again to see dependencies between our modules:
 
-![Level 2 xref dependency graph]({{ site.url }}/assets/modularity/05.png)
+![Level 2 xref dependency graph](05.png)
 
 *Level 2: `xref` dependency graph.*
 
 Let's see only the dependencies of `Chess.Robot` with `source` option: `mix xref graph --source lib/robot.ex --format=dot`:
 
-![Chess.Robot module dependencies graph]({{ site.url }}/assets/modularity/06.png)
+![Chess.Robot module dependencies graph](06.png)
 
 *`Chess.Robot` module dependencies graph*
 
 And we can see the modules depending on Chess.Robot with `sink`, as in
 `mix xref graph --sink lib/robot.ex --format=dot`:
 
-![Modules depending on Chess.Robot graph]({{ site.url }}/assets/modularity/07.png)
+![Modules depending on Chess.Robot graph](07.png)
 
 *Modules depending on `Chess.Robot` graph*
 
@@ -377,7 +382,7 @@ We'll arrive to a directory structure similar to this (only showing `lib` folder
 *Chess Phoenix application folder structure*
 
 <!--
-![Chess Phoenix application folder structure]({{ site.url }}/assets/modularity/08.png)
+![Chess Phoenix application folder structure](08.png)
 -->
 
 Now, we may want to clean that up a bit, for example by creating `Chess.Logic` context for the chess-specific game logic and structs:
@@ -411,7 +416,7 @@ Now, we may want to clean that up a bit, for example by creating `Chess.Logic` c
 *Better folder structure with `Logic` context*
 
 <!--
-![Better folder structure with Logic context]({{ site.url }}/assets/modularity/09.png)
+![Better folder structure with Logic context](09.png)
 -->
 
 You also may notice that our structure continues to be nice and recursive: we've got two applications `Chess` and `ChessWeb`, each with an upper-level context module in the `lib` directory. `ChessWeb` is structured according to the MVC pattern, but `Chess` is just our normal Elixir application --  it shouldn't know anything about the web part.

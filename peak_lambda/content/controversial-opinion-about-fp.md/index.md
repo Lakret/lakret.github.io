@@ -1,10 +1,15 @@
++++
+title = "Controversial Opinions About Functional Programming"
+date = 2018-02-20
++++
+
 I’ve been learning, doing, and teaching software development with functional programming languages and techniques for the last 8 years. I recently had several discussions with fellow functional programmers, and I found (to my surpise!) that a lot of opinions that I hold based on my experience are somewhat controversial among some of them. So, I decided that I should write it down somewhere and, hopefully, discuss some topics in more depth. Maybe you could show me the error of my ways, or maybe you agree with some or all of it, but feel that this is a weird point of view — which it is, I believe, not.
 
 ## Functional programming is mainstream, and we should make some changes because of it
 
 For a long time people considered FP to be some kind of edgy new thingy or maybe something that is taught and discussed within academic setting only. This is no longer a case: even JavaScript is getting slowly rebranded as a functional language nowadays. React seems to emerge as a winner in the frontend frameworks Game of Thrones, and few people would argue that it is inspired by FP to a large extent. Redux is also quite popular, and there’s [immutable.js](https://immutable-js.github.io/immutable-js/). Bloomberg and Facebook guys even did something that I’m personally very exited about: [BuckleScript](https://bucklescript.github.io/) and [Reason](https://reasonml.github.io/) may very well make OCaml popular. Just look at the level of IDE support of OCaml in VS Code:
 
-![References search, type inference with tooltips, complete syntax support, errors showing up immediately, refactoring — a dream come true.]({{ site.url }}/assets/controversial/01.png)
+![References search, type inference with tooltips, complete syntax support, errors showing up immediately, refactoring — a dream come true.](01.png)
 
 *References search, type inference with tooltips, complete syntax support, errors showing up immediately, refactoring — a dream come true.*
 
@@ -30,11 +35,11 @@ You *can* write very high-level generic code with Scala. But should you? Librari
 - Some languages are changing quite rapidly; things that worked a year ago may not work a year from now. In Scala land, when [Dotty](http://dotty.epfl.ch/) lands, do you expect your type-level abstractions to still work? And if the whole of your codebases uses them, how much effort bringing everything up to speed will require?
 - Code written with the help of those libraries is often harder to read and maintain. Let me just show you a couple of screenshots, and you can imagine trying to figure that out in 4 AM in the morning, because some server crashed, and logs bring you to this place of doom:
 
-![Taken from Shapeless sources]({{ site.url }}/assets/controversial/02.png)
+![Taken from Shapeless sources](02.png)
 
 *Taken from Shapeless [sources](https://github.com/milessabin/shapeless/blob/master/examples/src/main/scala/shapeless/examples/linearalgebra.scala)*
 
-![Scalaz in all of its controversial beauty]({{ site.url }}/assets/controversial/03.png)
+![Scalaz in all of its controversial beauty](03.png)
 
 *Scalaz in all of its controversial beauty*
 
