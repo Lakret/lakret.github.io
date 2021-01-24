@@ -1,0 +1,16 @@
+
+// Functions
+@function random_color($alpha: 0.5) {
+  @return rgba(random(255), random(255), random(255), 0.5);
+}
+
+// Scaling control
+$scale: 1.0;
+
+$article-width: 60rem;
+
+// Typography
+$text-color: black;
+$font-family: 'Fira Sans', sans-serif;
+$font-size: 1.5rem * $scale;
+$line-height: 1.5;

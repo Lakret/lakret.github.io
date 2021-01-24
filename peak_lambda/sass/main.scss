@@ -1,0 +1,122 @@
+
+@import "minireset";
+@import "theme.scss";
+
+body {
+  font-family: $font-family;
+  font-size: $font-size;
+  line-height: $line-height;
+
+  min-width: $scale * 45rem;
+  overflow: auto;
+
+  // TODO: background color?
+  // background-color: rgba(208,30,142,0.5);
+}
+
+pre {
+  padding: 1rem;
+  border-radius: 20px;
+}
+
+
+img {
+  max-width: $article-width;
+}
+
+.nolink {
+  color: $text-color;
+  text-decoration: none;
+}
+
+
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  flex: 1 1 auto;
+  min-width: 50rem;
+  max-width: 100rem;
+  padding: 1.5rem 1.5rem;
+
+
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar__title {
+  width: 60%;
+}
+
+.navbar__links {
+  display: flex;
+  justify-content: space-between;
+
+  font-weight: 300;
+}
+
+.navbar__link {
+  padding: 0 1rem;
+}
+
+.divider {
+  padding: ($scale * 2rem) 0;
+}
+
+.page-title {
+  // background-color: random-color();
+  font-size: 2 * $font-size;
+  padding: 0 3rem;
+
+  font-family: 'Fira Code';
+}
+
+.page-subtitle {
+  // TODO:
+}
+
+.posts {
+}
+
+.post-link {
+  // background-color: random-color();
+  padding: 0 0 1rem;
+
+  display: flex;
+}
+
+.post-link__date {
+  padding: 0.5rem;
+
+  font-size: $font-size * 0.75;
+  font-weight: 200;
+  text-align: center;
+}
+
+.post-link__title {
+  // background-color: random-color();
+  font-size: $font-size * 1.25;
+}
+
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.article {
+  width: $article-width;
+
+  font-size: 16pt;
+  line-height: 1.5;
+}

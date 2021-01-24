@@ -2,6 +2,7 @@
 title = "Controversial Opinions About Functional Programming"
 date = 2018-02-20
 +++
+<!-- human_date = "Feb 20th 2018" -->
 
 I’ve been learning, doing, and teaching software development with functional programming languages and techniques for the last 8 years. I recently had several discussions with fellow functional programmers, and I found (to my surpise!) that a lot of opinions that I hold based on my experience are somewhat controversial among some of them. So, I decided that I should write it down somewhere and, hopefully, discuss some topics in more depth. Maybe you could show me the error of my ways, or maybe you agree with some or all of it, but feel that this is a weird point of view — which it is, I believe, not.
 

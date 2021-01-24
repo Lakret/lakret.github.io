@@ -1,10 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">{{ section.title }}</h1>
 
-{% for page in section.pages %}
-<h3><a href="{{ page.permalink | safe }}">{{ page.title }} ({{page.date}})</a></h3>
-{% endfor %}
+<div class="navbar">
+  <div class="navbar__title">
+    <h1 class="page-title">{{ section.title }}</h1>
+  </div>
+
+  <div class="navbar__links">
+    <div class="navbar__link">
+      <a href="https://www.youtube.com/c/modernretrotech" class="nolink">YouTube</a>
+    </div>
+    <div class="navbar__link">
+      <a href="https://github.com/Lakret" class="nolink">GitHub</a>
+    </div>
+    <div class="navbar__link">
+      <a href="https://twitter.com/akaLakret" class="nolink">Twitter</a>
+    </div>
+    <div class="navbar__link">
+      <a href="/about" class="nolink">About</a>
+    </div>
+  </div>
+</div>
+<div class="divider" />
+
+
+<div class="posts">
+  {% for page in section.pages %}
+  <div class="post-link">
+    <div class="post-link__date">
+      <p>{{page.date}}</p>
+    </div>
+
+    <div class="post-link__title">
+      <a href="{{ page.permalink | safe }}" class="nolink">{{ page.title }}</a>
+    </div>
+
+
+  </div>
+  {% endfor %}
+</div>
 
 {% endblock content %}
