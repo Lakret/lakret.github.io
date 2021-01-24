@@ -7,9 +7,6 @@ body {
   font-size: $font-size;
   line-height: $line-height;
 
-  min-width: $scale * 45rem;
-  overflow: auto;
-
   // TODO: background color?
   // background-color: rgba(208,30,142,0.5);
 }
@@ -37,11 +34,12 @@ img {
 }
 
 .content {
+  background-color: random-color();
+
   flex: 1 1 auto;
   min-width: 50rem;
   max-width: 100rem;
   padding: 1.5rem 1.5rem;
-
 
   display: flex;
   flex-direction: column;
@@ -51,6 +49,10 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  min-width: $scale * 40rem;
+  overflow: auto;
+
 }
 
 .navbar__title {
@@ -76,15 +78,18 @@ img {
   // background-color: random-color();
   font-size: 2 * $font-size;
   padding: 0 3rem;
+}
 
+.page-title--code {
   font-family: 'Fira Code';
+}
+
+.page-title--center {
+  text-align: center;
 }
 
 .page-subtitle {
   // TODO:
-}
-
-.posts {
 }
 
 .post-link {
@@ -107,16 +112,29 @@ img {
   font-size: $font-size * 1.25;
 }
 
-
-.wrapper {
+.row-wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
 .article {
+  background-color: random-color();
+  flex: 1 1 auto;
+  min-width: 10rem;
   width: $article-width;
+  max-width: $article-width;
+  height: auto;
+  align-self: center;
+
+  display: flex;
+  flex-direction: column;
+
+  // justify-content: center;
 
   font-size: 16pt;
   line-height: 1.5;
+}
+
+.article > p {
+  padding: 1rem 0;
 }

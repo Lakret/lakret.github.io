@@ -4,7 +4,7 @@
 
 <div class="navbar">
   <div class="navbar__title">
-    <h1 class="page-title">{{ section.title }}</h1>
+    <h1 class="page-title page-title--code">{{ section.title }}</h1>
   </div>
 
   <div class="navbar__links">
@@ -33,7 +33,8 @@
     </div>
 
     <div class="post-link__title">
-      <a href="{{ page.permalink | safe }}" class="nolink">{{ page.title }}</a>
+      <a href="{{ page.permalink | safe | replace(from='http://127.0.0.1:1111/', to='/' ) }}"
+        class="nolink">{{page.title }}</a>
     </div>
 
 

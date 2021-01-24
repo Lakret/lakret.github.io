@@ -2,13 +2,11 @@
 
 {% block content %}
 
-<div class="wrapper">
-  <div>
-    <h1 class="page-title">{{ page.title }}</h1>
-    <h2 class="page-subtitle">{{ page.date }}</h2>
-  </div>
+<h1 class="page-title page-title--center">{{ page.title }}</h1>
+<!-- <h2 class="page-subtitle">{{ page.date }}</h2> -->
 
 
+<div class="row-wrapper">
   <div class="article">
     {{ page.content | safe }}
   </div>

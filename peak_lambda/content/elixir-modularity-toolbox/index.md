@@ -6,6 +6,9 @@ date = 2019-03-01
 
 Elixir is one of few languages that provides an almost complete set of modular abstractions. In this post I aim to provide a description of different ways of achieving modularity in Elixir for different application sizes, with usage notes and examples. We'll also look at a simple example of an app moving from one modularity "level" to the next over time, and will try some tools that will help us understand modular structure of our apps better.
 
+<!-- TODO: use summaries https://www.getzola.org/documentation/content/page/#summary -->
+<!-- more -->
+
 ## Table of Contents
 
 - [What's modularity?](#whats-modularity)
